@@ -8,7 +8,7 @@ Sonar::Sonar(const int echoPin, const int trigPin, const long timeOut) : echoPin
     setTemperature(20);
 }
 
-float Sonar::updateSoundSpeed()
+void Sonar::updateSoundSpeed()
 {
     this->soundSpeed = 331.5 + 0.6 * temperature;
 }

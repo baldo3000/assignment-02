@@ -11,7 +11,7 @@ private:
     int echoPin, trigPin;
     long timeOut;
 
-    float updateSoundSpeed();
+    void updateSoundSpeed();
 
 public:
     Sonar(int echoPin, int trigPin, long timeOut);

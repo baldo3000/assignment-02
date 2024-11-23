@@ -2,7 +2,7 @@
 #define __SERVO_MOTOR_IMPL__
 
 #include "ServoMotor.h"
-#include <ServoTimer2.h>
+#include "utilities/ServoTimer2.h"
 
 #define MIN 544.0
 #define MAX 2400.0
