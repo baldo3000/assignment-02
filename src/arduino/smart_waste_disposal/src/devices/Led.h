@@ -3,7 +3,7 @@
 
 #include "Light.h"
 
-class Led : Light
+class Led : public Light
 {
 private:
     int pin;

@@ -5,7 +5,7 @@
 
 #define DEBOUNCE_TIME 30
 
-class ButtonImpl : Button
+class ButtonImpl : public Button
 {
 private:
     int pin;
