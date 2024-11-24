@@ -1,7 +1,7 @@
 #include "Sonar.h"
 #include <Arduino.h>
 
-Sonar::Sonar(const int echoPin, const int trigPin, const long timeOut) : echoPin(echoPin), trigPin(trigPin), timeOut(timeOut)
+Sonar::Sonar(const int trigPin, const int echoPin, const long timeOut) : trigPin(trigPin), echoPin(echoPin), timeOut(timeOut)
 {
     pinMode(trigPin, OUTPUT);
     pinMode(echoPin, INPUT);
@@ -22,20 +22,14 @@ void Sonar::setTemperature(const float temp)
 float Sonar::getDistance()
 {
     digitalWrite(this->trigPin, LOW);
-    delayMicroseconds(3);
+    delayMicroseconds(2);
     digitalWrite(this->trigPin, HIGH);
-    delayMicroseconds(5);
+    delayMicroseconds(10);
     digitalWrite(this->trigPin, LOW);
 
-    const float timeMicroseconds = pulseIn(this->echoPin, HIGH, this->timeOut);
-    if (timeMicroseconds == 0)
-    {
-        return NO_OBJ_DETECTED;
-    }
-    else
-    {
-        const float timeSeconds = timeMicroseconds / 1000.0 / 1000.0 / 2;
-        const float distance = timeSeconds * this->soundSpeed;
-        return distance;
-    }
+    noInterrupts();
+    float d = pulseIn(this->echoPin, HIGH, 23529.4); // max sensor dist ~4m
+    interrupts();
+    d = d != 0 ? d / 58.8235 : NO_OBJ_DETECTED;
+    return d;
 }
