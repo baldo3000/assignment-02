@@ -1,16 +1,12 @@
 #include "TemperatureSensorTMP36.h"
+#include <Arduino.h>
 
-TemperatureSensorTMP36::TemperatureSensorTMP36(const int pin)
-{
-    this->sensor = new TMP36(pin, VCC);
-}
-
-TemperatureSensorTMP36::~TemperatureSensorTMP36()
-{
-    delete (this->sensor);
-}
+TemperatureSensorTMP36::TemperatureSensorTMP36(const int pin) : pin(pin) {}
 
 float TemperatureSensorTMP36::getTemperature()
 {
-    return this->sensor->getTempC();
+    uint8_t value = analogRead(this->pin);
+    float voltage = (value / 1024.0) * VCC;
+    float tempC = (voltage - 0.5) * 100;
+    return (tempC - 32.0) * 5.0 / 9.0;
 }
