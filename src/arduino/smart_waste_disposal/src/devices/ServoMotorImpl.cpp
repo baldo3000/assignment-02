@@ -15,7 +15,7 @@ void ServoMotorImpl::off()
 
 void ServoMotorImpl::setPosition(const int angle)
 {
-    int correctedAngle;
+    int correctedAngle = angle;
     if (angle > 180)
     {
         correctedAngle = 180;
