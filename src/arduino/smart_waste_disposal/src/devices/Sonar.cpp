@@ -1,7 +1,7 @@
 #include "Sonar.h"
 #include <Arduino.h>
 
-Sonar::Sonar(const int trigPin, const int echoPin, const long timeOut) : trigPin(trigPin), echoPin(echoPin), timeOut(timeOut)
+Sonar::Sonar(const int trigPin, const int echoPin) : trigPin(trigPin), echoPin(echoPin)
 {
     pinMode(trigPin, OUTPUT);
     pinMode(echoPin, INPUT);
