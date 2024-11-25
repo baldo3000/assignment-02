@@ -12,7 +12,7 @@ private:
     bool motionDetected;
 
 public:
-    Pir(const int pin);
+    Pir(int pin);
     void calibrate();
     bool isMotionDetected();
     void sync();

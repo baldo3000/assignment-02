@@ -4,7 +4,7 @@
 class PresenceSensor
 {
 public:
-    virtual bool isDetected() = 0;
+    virtual bool isMotionDetected() = 0;
 };
 
 #endif
