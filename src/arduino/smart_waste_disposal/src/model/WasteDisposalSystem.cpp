@@ -1,18 +1,19 @@
 #include "WasteDisposalSystem.h"
 #include "devices/TemperatureSensorTMP36.h"
 #include "devices/ServoMotorImpl.h"
+#include "config.h"
 #include <Arduino.h>
 
 WasteDisposalSystem::WasteDisposalSystem() {}
 
 void WasteDisposalSystem::init()
 {
-    this->pProximitySensor = new Sonar(-1, -1);
-    this->pPresenceSensor = new Pir(-1);
-    this->pTemperatureSensor = new TemperatureSensorTMP36(-1);
-    this->pGreenLed = new Led(-1);
-    this->pRedLed = new Led(-1);
-    this->pDoorMotor = new ServoMotorImpl(-1);
+    this->pProximitySensor = new Sonar(SONAR_TRIG_PIN, SONAR_ECHO_PIN);
+    this->pPresenceSensor = new Pir(PIR_PIN);
+    this->pTemperatureSensor = new TemperatureSensorTMP36(TEMP_SENSOR_PIN);
+    this->pGreenLed = new Led(LED_GREEN_PIN);
+    this->pRedLed = new Led(LED_RED_PIN);
+    this->pDoorMotor = new ServoMotorImpl(DOOR_PIN);
 
     // Logger.log("Calibrating sensors in plant...");
     this->pPresenceSensor->calibrate();
