@@ -13,8 +13,6 @@ class WasteDisposalSystem
 private:
     Led *pGreenLed;
     Led *pRedLed;
-    // ButtonImpl *pOpenButton;
-    // ButtonImpl *pCloseButton;
     Pir *pPresenceSensor;
     ServoMotor *pDoorMotor;
     Sonar *pProximitySensor;

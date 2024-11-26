@@ -10,6 +10,7 @@
 #define SONAR_TRIG_PIN 7
 #define SONAR_ECHO_PIN 8
 
-#define DOOR_PIN 9
+#define OPEN_DOOR_PIN 9
+#define CLOSE_DOOR_PIN 10
 
 #endif
