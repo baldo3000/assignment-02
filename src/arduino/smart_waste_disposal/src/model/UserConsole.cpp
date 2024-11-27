@@ -39,11 +39,15 @@ void UserConsole::sync()
 
 bool UserConsole::openDoorSignal()
 {
+    // TODO: remove sync from here
+    this->pOpenButton->sync();
     return this->pOpenButton->isPressed();
 }
 
 bool UserConsole::closeDoorSignal()
 {
+    // TODO: remove sync from here
+    this->pCloseButton->sync();
     return this->pCloseButton->isPressed();
 }
 

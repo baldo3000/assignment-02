@@ -1,7 +1,7 @@
 #ifndef USERCONSOLE_H
 #define USERCONSOLE_H
 
-#include "config.h"
+#include "hardwareConfig.h"
 #include "devices/ButtonImpl.h"
 #include <Wire.h>
 #include <LiquidCrystal_I2C.h>

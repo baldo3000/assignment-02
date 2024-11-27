@@ -1,7 +1,7 @@
 #include "WasteDisposalSystem.h"
 #include "devices/TemperatureSensorTMP36.h"
 #include "devices/ServoMotorImpl.h"
-#include "config.h"
+#include "hardwareConfig.h"
 #include <Arduino.h>
 
 WasteDisposalSystem::WasteDisposalSystem() {}
