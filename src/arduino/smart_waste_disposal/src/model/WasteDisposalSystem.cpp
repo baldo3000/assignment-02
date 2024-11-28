@@ -2,6 +2,7 @@
 #include "devices/TemperatureSensorTMP36.h"
 #include "devices/ServoMotorImpl.h"
 #include "hardwareConfig.h"
+#include "kernel/Logger.h"
 #include <Arduino.h>
 
 WasteDisposalSystem::WasteDisposalSystem() {}
@@ -15,9 +16,10 @@ void WasteDisposalSystem::init()
     this->pRedLed = new Led(LED_RED_PIN);
     this->pDoorMotor = new ServoMotorImpl(DOOR_PIN);
 
-    // Logger.log("Calibrating sensors in plant...");
+    Logger.log("Calibrating sensors in plant...");
     this->pPresenceSensor->calibrate();
     this->pDoorMotor->on();
+    Logger.log("Calibration done");
 
     this->fullness = 0;
     this->temperature = 0;

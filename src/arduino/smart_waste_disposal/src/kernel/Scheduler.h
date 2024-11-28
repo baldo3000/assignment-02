@@ -10,7 +10,6 @@ class Scheduler
 private:
     int basePeriod;
     int nTasks;
-    long prevTickStartTime;
     Task *taskList[MAX_TASKS];
 
 public:

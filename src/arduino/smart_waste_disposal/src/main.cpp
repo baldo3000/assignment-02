@@ -54,7 +54,15 @@ void setup()
     // sched.addTask(pTelemetryTask);
 }
 
+void logSensors()
+{
+    Logger.log("Temperature: " + String(pSystem->getCurrentTemperature()) + "°C" +
+               " Fullness: " + String(pSystem->getCurrentFullness()) + "%" +
+               " User Presence: " + String(pSystem->detectedUserPresence()));
+}
+
 void loop()
 {
     sched.schedule();
+    logSensors();
 }
