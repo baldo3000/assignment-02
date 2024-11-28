@@ -12,8 +12,8 @@ void WasteDisposalSystem::init()
     this->pProximitySensor = new Sonar(SONAR_TRIG_PIN, SONAR_ECHO_PIN);
     this->pPresenceSensor = new Pir(PIR_PIN);
     this->pTemperatureSensor = new TemperatureSensorTMP36(TEMP_SENSOR_PIN);
-    this->pGreenLed = new Led(LED_GREEN_PIN);
-    this->pRedLed = new Led(LED_RED_PIN);
+    //this->pGreenLed = new Led(LED_GREEN_PIN);
+    //this->pRedLed = new Led(LED_RED_PIN);
     this->pDoorMotor = new ServoMotorImpl(DOOR_PIN);
 
     Logger.log("Calibrating sensors in plant...");

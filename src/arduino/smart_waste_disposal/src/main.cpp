@@ -41,13 +41,13 @@ void setup()
 
     pWorkflowTask->init(100);
     // pCheckTask->init(100);
-    pFullnessTask->init(100);
+    pFullnessTask->init(200);
     pTemperatureTask->init(100);
     pUserPresenceTask->init(100);
     // pTelemetryTask->init(100);
 
     sched.addTask(pWorkflowTask);
-    // sched.addTask(pCheckTask);
+    //sched.addTask(pCheckTask);
     sched.addTask(pFullnessTask);
     sched.addTask(pTemperatureTask);
     sched.addTask(pUserPresenceTask);
@@ -64,5 +64,7 @@ void logSensors()
 void loop()
 {
     sched.schedule();
-    logSensors();
+    //logSensors();
+    //Logger.log(String(pUserConsole->closeDoorSignal()));
+    //Serial.println(millis());
 }

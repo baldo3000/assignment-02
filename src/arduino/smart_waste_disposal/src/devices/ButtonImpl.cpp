@@ -4,6 +4,7 @@
 ButtonImpl::ButtonImpl(const int pin) : pin(pin)
 {
     pinMode(pin, INPUT);
+    this->lastTimeSync = 0;
     sync();
 }
 
