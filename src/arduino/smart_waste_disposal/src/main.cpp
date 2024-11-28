@@ -64,7 +64,7 @@ void logSensors()
 void loop()
 {
     sched.schedule();
-    //logSensors();
+    logSensors();
     //Logger.log(String(pUserConsole->closeDoorSignal()));
     //Serial.println(millis());
 }

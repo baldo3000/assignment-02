@@ -2,6 +2,7 @@
 #include "devices/TemperatureSensorTMP36.h"
 #include "devices/ServoMotorImpl.h"
 #include "hardwareConfig.h"
+#include "config.h"
 #include "kernel/Logger.h"
 #include <Arduino.h>
 
@@ -12,8 +13,8 @@ void WasteDisposalSystem::init()
     this->pProximitySensor = new Sonar(SONAR_TRIG_PIN, SONAR_ECHO_PIN);
     this->pPresenceSensor = new Pir(PIR_PIN);
     this->pTemperatureSensor = new TemperatureSensorTMP36(TEMP_SENSOR_PIN);
-    //this->pGreenLed = new Led(LED_GREEN_PIN);
-    //this->pRedLed = new Led(LED_RED_PIN);
+    // this->pGreenLed = new Led(LED_GREEN_PIN);
+    // this->pRedLed = new Led(LED_RED_PIN);
     this->pDoorMotor = new ServoMotorImpl(DOOR_PIN);
 
     Logger.log("Calibrating sensors in plant...");
@@ -142,10 +143,30 @@ void WasteDisposalSystem::sampleUserPresence()
     this->userPresence = this->pPresenceSensor->isMotionDetected();
 }
 
+double doubleMap(double x, double in_min, double in_max, double out_min, double out_max)
+{
+    return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
+}
+
+double WasteDisposalSystem::distanceToFullness(const double distance)
+{
+    double correctedDistance = distance;
+    if (distance > MIN_FULLNESS_DISTANCE || distance == NO_OBJ_DETECTED)
+    {
+        correctedDistance = MIN_FULLNESS_DISTANCE;
+    }
+    else if (distance < MAX_FULLNESS_DISTANCE)
+    {
+        correctedDistance = MAX_FULLNESS_DISTANCE;
+    }
+
+    return 100 - map(correctedDistance, MAX_FULLNESS_DISTANCE, MIN_FULLNESS_DISTANCE, 0, 100);
+}
+
 void WasteDisposalSystem::sampleFullness()
 {
-    // TODO: Implement fullness boundaries
-    this->fullness = this->pProximitySensor->getDistance();
+    const double distance = this->pProximitySensor->getDistance();
+    this->fullness = distanceToFullness(distance);
 }
 
 void WasteDisposalSystem::sampleTemperature()

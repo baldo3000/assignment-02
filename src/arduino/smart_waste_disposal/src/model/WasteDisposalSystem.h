@@ -33,6 +33,8 @@ private:
         MAINTENANCE,
     } state;
 
+    double distanceToFullness(double distance);
+
 public:
     WasteDisposalSystem();
 
