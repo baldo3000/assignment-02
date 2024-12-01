@@ -3,7 +3,7 @@
 
 #include "TemperatureSensor.h"
 
-#define VCC ((float)5)
+#define VCC 5.0
 
 class TemperatureSensorTMP36 : public TemperatureSensor
 {

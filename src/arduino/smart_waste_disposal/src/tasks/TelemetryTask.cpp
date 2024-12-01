@@ -48,12 +48,10 @@ void TelemetryTask::tick()
             stateCode = 4;
         }
 
-        this->pSystem->sampleTemperature();
-        this->pSystem->sampleFullness();
         const double fullness = pSystem->getCurrentFullness();
         const double currentTemp = pSystem->getCurrentTemperature();
 
-        MsgService.sendMsg(String("cw:") + String(stateCode) + ":" + String(fullness).substring(0, 5) + ":" + String(currentTemp).substring(0, 5));
+        MsgService.sendMsg(String("wd:st:") + String(stateCode) + ":" + String(fullness) + ":" + String(currentTemp));
         setState(IDLE);
         break;
     }

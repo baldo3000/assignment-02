@@ -48,8 +48,13 @@ public:
     bool isDisposing();
     bool isInMaintenance();
 
+    void idle();
+    void waitForUser();
+    void userDetected();
+    void dispose();
+
     // control maintenance from outside
-    void setInMaintenance();
+    void inMaintenance();
     void maintenanceDone();
 
     double getCurrentFullness();

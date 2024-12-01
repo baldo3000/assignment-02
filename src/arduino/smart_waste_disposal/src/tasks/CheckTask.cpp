@@ -35,14 +35,14 @@ void CheckTask::tick()
     {
     case CHECKING_PROBLEMS:
         logOnce("CHECKING_PROBLEMS");
-        if (pSystem->getCurrentTemperature() > OVERHEAT_THRESHOLD)
+        if (pSystem->getCurrentTemperature() >= OVERHEAT_THRESHOLD)
         {
-            this->pSystem->setInMaintenance();
+            this->pSystem->inMaintenance();
             setState(OVERHEATED);
         }
-        else if (pSystem->getCurrentFullness() > FULL_THRESHOLD)
+        else if (pSystem->getCurrentFullness() >= FULL_THRESHOLD)
         {
-            this->pSystem->setInMaintenance();
+            this->pSystem->inMaintenance();
             setState(FULL);
         }
         break;

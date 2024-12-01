@@ -54,7 +54,27 @@ bool WasteDisposalSystem::isDisposing()
     return this->state == DISPOSING;
 }
 
-void WasteDisposalSystem::setInMaintenance()
+void WasteDisposalSystem::idle()
+{
+    this->state = IDLE;
+}
+
+void WasteDisposalSystem::waitForUser()
+{
+    this->state = WAITING_FOR_USER;
+}
+
+void WasteDisposalSystem::userDetected()
+{
+    this->state = USER_DETECTED;
+}
+
+void WasteDisposalSystem::dispose()
+{
+    this->state = DISPOSING;
+}
+
+void WasteDisposalSystem::inMaintenance()
 {
     this->state = MAINTENANCE;
 }
@@ -141,8 +161,7 @@ double WasteDisposalSystem::distanceToFullness(const double distance)
     {
         correctedDistance = MAX_FULLNESS_DISTANCE;
     }
-
-    return 100 - map(correctedDistance, MAX_FULLNESS_DISTANCE, MIN_FULLNESS_DISTANCE, 0, 100);
+    return 100.0 - doubleMap(correctedDistance, MAX_FULLNESS_DISTANCE, MIN_FULLNESS_DISTANCE, 0.0, 100);
 }
 
 void WasteDisposalSystem::sampleFullness()

@@ -35,6 +35,7 @@ void WorkflowTask::tick()
     {
     case IDLE:
         logOnce("IDLE");
+        this->pSystem->idle();
         this->pUserConsole->displayWelcome();
         this->pSystem->setLed1On(true);
         this->pSystem->setLed2On(false);
@@ -43,6 +44,7 @@ void WorkflowTask::tick()
 
     case WAITING_FOR_USER:
         logOnce("WAITING_FOR_USER");
+        this->pSystem->waitForUser();
         if (elapsedTimeInState() > TIME_TO_SLEEP)
         {
             setState(PREPARE_FOR_SLEEP);
@@ -55,6 +57,7 @@ void WorkflowTask::tick()
 
     case USER_DETECTED:
         logOnce("USER_DETECTED");
+        this->pSystem->userDetected();
         if (!pSystem->detectedUserPresence())
         {
             setState(WAITING_FOR_USER);
@@ -67,6 +70,7 @@ void WorkflowTask::tick()
 
     case DOOR_OPENING:
         logOnce("DOOR_OPENING");
+        this->pSystem->dispose();
         this->pSystem->openDoor();
         setState(DISPOSING);
         break;
@@ -93,6 +97,7 @@ void WorkflowTask::tick()
         break;
 
     case PROBLEM_DETECTED:
+        this->pSystem->inMaintenance();
         this->pSystem->setLed1On(false);
         this->pSystem->setLed2On(true);
         logOnce("PROBLEM_DETECTED");
@@ -101,17 +106,20 @@ void WorkflowTask::tick()
     case PREPARE_FOR_SLEEP:
         logOnce("PREPARE_FOR_SLEEP");
         this->pUserConsole->prepareToSleep();
+        setState(SLEEP);
         break;
 
     case SLEEP:
         logOnce("SLEEP");
         // TODO: to be implemented
         Serial.println("Faking sleeping...");
+        setState(RESTORE_FROM_SLEEP);
         break;
 
     case RESTORE_FROM_SLEEP:
         logOnce("RESTORE_FROM_SLEEP");
         this->pUserConsole->resumeFromSleeping();
+        setState(IDLE);
         break;
     }
 }
