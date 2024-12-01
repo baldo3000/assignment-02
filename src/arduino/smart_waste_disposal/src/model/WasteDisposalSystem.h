@@ -28,7 +28,8 @@ private:
         WAITING_FOR_USER,
         USER_DETECTED,
         DISPOSING,
-        MAINTENANCE,
+        OVERHEATED,
+        FULL
     } state;
 
     double distanceToFullness(double distance);
@@ -46,16 +47,15 @@ public:
     bool isWaitingForUser();
     bool isUserDetected();
     bool isDisposing();
-    bool isInMaintenance();
+    bool isFull();
+    bool isOverheated();
 
     void idle();
     void waitForUser();
     void userDetected();
     void dispose();
-
-    // control maintenance from outside
-    void inMaintenance();
-    void maintenanceDone();
+    void full();
+    void overheated();
 
     double getCurrentFullness();
     bool detectedUserPresence();

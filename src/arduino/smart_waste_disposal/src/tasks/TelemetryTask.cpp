@@ -43,9 +43,13 @@ void TelemetryTask::tick()
         {
             stateCode = 3;
         }
-        else if (this->pSystem->isInMaintenance())
+        else if (this->pSystem->isFull())
         {
             stateCode = 4;
+        }
+        else if (this->pSystem->isOverheated())
+        {
+            stateCode = 5;
         }
 
         const double fullness = pSystem->getCurrentFullness();

@@ -74,19 +74,24 @@ void WasteDisposalSystem::dispose()
     this->state = DISPOSING;
 }
 
-void WasteDisposalSystem::inMaintenance()
+void WasteDisposalSystem::full()
 {
-    this->state = MAINTENANCE;
+    this->state = FULL;
 }
 
-bool WasteDisposalSystem::isInMaintenance()
+void WasteDisposalSystem::overheated()
 {
-    return this->state == MAINTENANCE;
+    this->state = OVERHEATED;
 }
 
-void WasteDisposalSystem::maintenanceDone()
+bool WasteDisposalSystem::isFull()
 {
-    this->state = IDLE;
+    return this->state == FULL;
+}
+
+bool WasteDisposalSystem::isOverheated()
+{
+    return this->state == OVERHEATED;
 }
 
 double WasteDisposalSystem::getCurrentFullness()

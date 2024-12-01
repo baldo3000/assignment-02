@@ -77,7 +77,7 @@ void WorkflowTask::tick()
 
     case DISPOSING:
         logOnce("DISPOSING");
-        if (elapsedTimeInState() > DISPOSE_MAX_TIME || pUserConsole->closeDoorSignal() || this->pSystem->isInMaintenance())
+        if (elapsedTimeInState() > DISPOSE_MAX_TIME || pUserConsole->closeDoorSignal() || this->pSystem->isFull() || this->pSystem->isOverheated())
         {
             setState(DOOR_CLOSING);
         }
@@ -86,7 +86,7 @@ void WorkflowTask::tick()
     case DOOR_CLOSING:
         logOnce("DOOR_CLOSING");
         this->pSystem->closeDoor();
-        if (this->pSystem->isInMaintenance())
+        if (this->pSystem->isFull() || this->pSystem->isOverheated())
         {
             setState(PROBLEM_DETECTED);
         }
@@ -97,7 +97,6 @@ void WorkflowTask::tick()
         break;
 
     case PROBLEM_DETECTED:
-        this->pSystem->inMaintenance();
         this->pSystem->setLed1On(false);
         this->pSystem->setLed2On(true);
         logOnce("PROBLEM_DETECTED");
