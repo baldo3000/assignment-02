@@ -1,8 +1,8 @@
 #ifndef HARDWARECONFIG_H
 #define HARDWARECONFIG_H
 
-#define LED_GREEN_PIN 13
-#define LED_RED_PIN 13
+#define LED_GREEN_PIN 6
+#define LED_RED_PIN 5
 
 #define TEMP_SENSOR_PIN A0
 #define PIR_PIN 4

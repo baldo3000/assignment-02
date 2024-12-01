@@ -35,6 +35,9 @@ void WorkflowTask::tick()
     {
     case IDLE:
         logOnce("IDLE");
+        this->pUserConsole->displayWelcome();
+        this->pSystem->setLed1On(true);
+        this->pSystem->setLed2On(false);
         setState(WAITING_FOR_USER);
         break;
 
@@ -90,6 +93,8 @@ void WorkflowTask::tick()
         break;
 
     case PROBLEM_DETECTED:
+        this->pSystem->setLed1On(false);
+        this->pSystem->setLed2On(true);
         logOnce("PROBLEM_DETECTED");
         break;
 

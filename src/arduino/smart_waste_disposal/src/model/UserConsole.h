@@ -13,14 +13,14 @@ private:
     ButtonImpl *pCloseButton;
     LiquidCrystal_I2C *pLcd;
 
-    void turnOffDisplay();
-    void turnOnDisplay();
-
 public:
     UserConsole();
 
     void init();
     void sync();
+
+    void turnOffDisplay();
+    void turnOnDisplay();
 
     bool openDoorSignal();
     bool closeDoorSignal();

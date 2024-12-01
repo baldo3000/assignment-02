@@ -13,8 +13,8 @@ void WasteDisposalSystem::init()
     this->pProximitySensor = new Sonar(SONAR_TRIG_PIN, SONAR_ECHO_PIN);
     this->pPresenceSensor = new Pir(PIR_PIN);
     this->pTemperatureSensor = new TemperatureSensorTMP36(TEMP_SENSOR_PIN);
-    // this->pGreenLed = new Led(LED_GREEN_PIN);
-    // this->pRedLed = new Led(LED_RED_PIN);
+    this->pGreenLed = new Led(LED_GREEN_PIN);
+    this->pRedLed = new Led(LED_RED_PIN);
     this->pDoorMotor = new ServoMotorImpl(DOOR_PIN);
 
     Logger.log("Calibrating sensors in plant...");
@@ -34,19 +34,9 @@ void WasteDisposalSystem::prepareToSleep() {}
 // TODO: Implement what to do after sleeping (restoring)
 void WasteDisposalSystem::resumeFromSleeping() {}
 
-void WasteDisposalSystem::idle()
-{
-    this->state = IDLE;
-}
-
 bool WasteDisposalSystem::isIdle()
 {
     return this->state == IDLE;
-}
-
-void WasteDisposalSystem::waitForUser()
-{
-    this->state = WAITING_FOR_USER;
 }
 
 bool WasteDisposalSystem::isWaitingForUser()
@@ -54,46 +44,14 @@ bool WasteDisposalSystem::isWaitingForUser()
     return this->state == WAITING_FOR_USER;
 }
 
-void WasteDisposalSystem::userDetected()
-{
-    this->state = USER_DETECTED;
-}
-
 bool WasteDisposalSystem::isUserDetected()
 {
     return this->state == USER_DETECTED;
 }
 
-void WasteDisposalSystem::readyToDispose()
-{
-    this->state = READY_TO_DISPOSE;
-}
-
-bool WasteDisposalSystem::isReadyToDispose()
-{
-    return this->state == READY_TO_DISPOSE;
-}
-
-void WasteDisposalSystem::dispose()
-{
-    openDoor();
-    this->state = DISPOSING;
-}
-
 bool WasteDisposalSystem::isDisposing()
 {
     return this->state == DISPOSING;
-}
-
-void WasteDisposalSystem::disposeCompleted()
-{
-    closeDoor();
-    this->state = DISPOSING_COMPLETED;
-}
-
-bool WasteDisposalSystem::isDisposeCompleted()
-{
-    return this->state == DISPOSING_COMPLETED;
 }
 
 void WasteDisposalSystem::setInMaintenance()
@@ -135,6 +93,30 @@ void WasteDisposalSystem::openDoor()
 void WasteDisposalSystem::closeDoor()
 {
     this->pDoorMotor->setPosition(90);
+}
+
+void WasteDisposalSystem::setLed1On(const bool on)
+{
+    if (on)
+    {
+        this->pGreenLed->switchOn();
+    }
+    else
+    {
+        this->pGreenLed->switchOff();
+    }
+}
+
+void WasteDisposalSystem::setLed2On(const bool on)
+{
+    if (on)
+    {
+        this->pRedLed->switchOn();
+    }
+    else
+    {
+        this->pRedLed->switchOff();
+    }
 }
 
 void WasteDisposalSystem::sampleUserPresence()

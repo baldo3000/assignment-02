@@ -22,14 +22,12 @@ private:
     double temperature;
     bool userPresence;
 
-    enum
+    enum State
     {
         IDLE,
         WAITING_FOR_USER,
         USER_DETECTED,
-        READY_TO_DISPOSE,
         DISPOSING,
-        DISPOSING_COMPLETED,
         MAINTENANCE,
     } state;
 
@@ -44,26 +42,14 @@ public:
     void prepareToSleep();
     void resumeFromSleeping();
 
-    void idle();
     bool isIdle();
-
-    void waitForUser();
     bool isWaitingForUser();
-
-    void userDetected();
     bool isUserDetected();
-
-    void readyToDispose();
-    bool isReadyToDispose();
-
-    void dispose();
     bool isDisposing();
-
-    void disposeCompleted();
-    bool isDisposeCompleted();
-
-    void setInMaintenance();
     bool isInMaintenance();
+
+    // control maintenance from outside
+    void setInMaintenance();
     void maintenanceDone();
 
     double getCurrentFullness();
@@ -73,6 +59,8 @@ public:
     // hardware control
     void openDoor();
     void closeDoor();
+    void setLed1On(bool on);
+    void setLed2On(bool on);
     void sampleUserPresence();
     void sampleFullness();
     void sampleTemperature();

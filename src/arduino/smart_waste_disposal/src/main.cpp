@@ -31,27 +31,28 @@ void setup()
 
     pUserConsole = new UserConsole();
     pUserConsole->init();
+    pUserConsole->turnOnDisplay();
 
-    WorkflowTask *pWorkflowTask = new WorkflowTask(pSystem, pUserConsole);
-    // CheckTask *pCheckTask = new CheckTask(pSystem, pUserConsole);
     FullnessTask *pFullnessTask = new FullnessTask(pSystem);
     TemperatureTask *pTemperatureTask = new TemperatureTask(pSystem);
     UserPresenceTask *pUserPresenceTask = new UserPresenceTask(pSystem);
-    // TelemetryTask *pTelemetryTask = new TelemetryTask(pSystem);
+    WorkflowTask *pWorkflowTask = new WorkflowTask(pSystem, pUserConsole);
+    CheckTask *pCheckTask = new CheckTask(pSystem, pUserConsole);
+    TelemetryTask *pTelemetryTask = new TelemetryTask(pSystem, pUserConsole);
 
-    pWorkflowTask->init(100);
-    // pCheckTask->init(100);
     pFullnessTask->init(200);
     pTemperatureTask->init(100);
     pUserPresenceTask->init(100);
-    // pTelemetryTask->init(100);
+    pWorkflowTask->init(100);
+    pCheckTask->init(100);
+    pTelemetryTask->init(100);
 
-    sched.addTask(pWorkflowTask);
-    //sched.addTask(pCheckTask);
     sched.addTask(pFullnessTask);
     sched.addTask(pTemperatureTask);
     sched.addTask(pUserPresenceTask);
-    // sched.addTask(pTelemetryTask);
+    sched.addTask(pWorkflowTask);
+    sched.addTask(pCheckTask);
+    sched.addTask(pTelemetryTask);
 }
 
 void logSensors()
@@ -64,7 +65,7 @@ void logSensors()
 void loop()
 {
     sched.schedule();
-    logSensors();
-    //Logger.log(String(pUserConsole->closeDoorSignal()));
-    //Serial.println(millis());
+    // logSensors();
+    // Logger.log(String(pUserConsole->closeDoorSignal()));
+    // Serial.println(millis());
 }
