@@ -1,5 +1,6 @@
 #include "WorkFlowTask.h"
 #include "kernel/Logger.h"
+#include "kernel/MsgService.h"
 #include "config.h"
 #include <Arduino.h>
 
@@ -34,7 +35,7 @@ void WorkflowTask::tick()
     switch (this->state)
     {
     case IDLE:
-        logOnce("IDLE");
+        logOnce("[WF] idle");
         this->pSystem->idle();
         this->pUserConsole->displayWelcome();
         this->pSystem->setLed1On(true);
@@ -43,7 +44,7 @@ void WorkflowTask::tick()
         break;
 
     case WAITING_FOR_USER:
-        logOnce("WAITING_FOR_USER");
+        logOnce("[WF] waiting for user");
         this->pSystem->waitForUser();
         if (elapsedTimeInState() > TIME_TO_SLEEP)
         {
@@ -56,7 +57,7 @@ void WorkflowTask::tick()
         break;
 
     case USER_DETECTED:
-        logOnce("USER_DETECTED");
+        logOnce("[WF] user detected");
         this->pSystem->userDetected();
         if (!pSystem->detectedUserPresence())
         {
@@ -69,14 +70,14 @@ void WorkflowTask::tick()
         break;
 
     case DOOR_OPENING:
-        logOnce("DOOR_OPENING");
+        logOnce("[WF] door opening");
         this->pSystem->dispose();
         this->pSystem->openDoor();
         setState(DISPOSING);
         break;
 
     case DISPOSING:
-        logOnce("DISPOSING");
+        logOnce("[WF] disposing");
         if (elapsedTimeInState() > DISPOSE_MAX_TIME || pUserConsole->closeDoorSignal() || this->pSystem->isFull() || this->pSystem->isOverheated())
         {
             setState(DOOR_CLOSING);
@@ -84,7 +85,7 @@ void WorkflowTask::tick()
         break;
 
     case DOOR_CLOSING:
-        logOnce("DOOR_CLOSING");
+        logOnce("[WF] door closing");
         this->pSystem->closeDoor();
         if (this->pSystem->isFull() || this->pSystem->isOverheated())
         {
@@ -99,26 +100,72 @@ void WorkflowTask::tick()
     case PROBLEM_DETECTED:
         this->pSystem->setLed1On(false);
         this->pSystem->setLed2On(true);
-        logOnce("PROBLEM_DETECTED");
+        logOnce("[WF] problem detected");
+        if (this->pSystem->isFull() && checkEmptyMsg())
+        {
+            setState(IDLE);
+        }
+        if (this->pSystem->isOverheated() && checkResetMsg())
+        {
+            setState(IDLE);
+        }
         break;
 
     case PREPARE_FOR_SLEEP:
-        logOnce("PREPARE_FOR_SLEEP");
+        logOnce("[WF] prepare for sleep");
         this->pUserConsole->prepareToSleep();
         setState(SLEEP);
         break;
 
     case SLEEP:
-        logOnce("SLEEP");
+        logOnce("[WF] sleep");
         // TODO: to be implemented
         Serial.println("Faking sleeping...");
         setState(RESTORE_FROM_SLEEP);
         break;
 
     case RESTORE_FROM_SLEEP:
-        logOnce("RESTORE_FROM_SLEEP");
+        logOnce("[WF] restore from sleep");
         this->pUserConsole->resumeFromSleeping();
         setState(IDLE);
         break;
     }
+}
+
+bool WorkflowTask::checkEmptyMsg()
+{
+    bool empty = false;
+    if (MsgService.isMsgAvailable())
+    {
+        Msg *msg = MsgService.receiveMsg();
+        if (msg != NULL)
+        {
+            Logger.log(msg->getContent());
+            if (msg->getContent() == "emptied")
+            {
+                empty = true;
+            }
+            delete msg;
+        }
+    }
+    return empty;
+}
+
+bool WorkflowTask::checkResetMsg()
+{
+    bool reset = false;
+    if (MsgService.isMsgAvailable())
+    {
+        Msg *msg = MsgService.receiveMsg();
+        if (msg != NULL)
+        {
+            Logger.log(msg->getContent());
+            if (msg->getContent() == "reset")
+            {
+                reset = true;
+            }
+            delete msg;
+        }
+    }
+    return reset;
 }

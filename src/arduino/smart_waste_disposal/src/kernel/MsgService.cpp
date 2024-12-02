@@ -1,5 +1,6 @@
 #include "Arduino.h"
 #include "MsgService.h"
+#include "Logger.h"
 
 String content;
 
@@ -48,6 +49,7 @@ void serialEvent()
         char ch = (char)Serial.read();
         if (ch == '\n')
         {
+            Logger.log("[MSG] Received: " + content);
             MsgService.currentMsg = new Msg(content);
             MsgService.msgAvailable = true;
         }

@@ -56,7 +56,6 @@ void UserConsole::displayWelcome()
     this->pLcd->clear();
     this->pLcd->setCursor(0, 0);
     this->pLcd->print("Welcome");
-    Serial.println("Welcome");
 }
 
 void UserConsole::displayReadyToDispose()
