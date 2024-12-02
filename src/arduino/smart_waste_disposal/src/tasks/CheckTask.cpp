@@ -34,7 +34,7 @@ void CheckTask::tick()
     switch (this->state)
     {
     case CHECKING_PROBLEMS:
-        // logOnce("[CT] checking problems");
+        // logOnce("[CHK] checking problems");
         if (pSystem->getCurrentTemperature() >= OVERHEAT_THRESHOLD)
         {
             this->pSystem->overheated();
@@ -48,7 +48,7 @@ void CheckTask::tick()
         break;
 
     case OVERHEATED:
-        // logOnce("[CT] overheated");
+        // logOnce("[CHK] overheated");
         if (!this->pSystem->isOverheated())
         {
             setState(CHECKING_PROBLEMS);
@@ -56,7 +56,7 @@ void CheckTask::tick()
         break;
 
     case FULL:
-        // logOnce("[CT] full");
+        // logOnce("[CHK] full");
         if (!this->pSystem->isFull())
         {
             setState(CHECKING_PROBLEMS);

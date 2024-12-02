@@ -2,7 +2,10 @@
 #include "kernel/Logger.h"
 #include "kernel/MsgService.h"
 #include "config.h"
+#include "hardwareConfig.h"
 #include <Arduino.h>
+#include <avr/sleep.h>
+#include <EnableInterrupt.h>
 
 WorkflowTask::WorkflowTask(WasteDisposalSystem *pSystem, UserConsole *pUserConsole) : pSystem(pSystem), pUserConsole(pUserConsole)
 {
@@ -29,6 +32,8 @@ void WorkflowTask::logOnce(const String &msg)
         this->justEntered = false;
     }
 }
+
+void wakeUpNow() {}
 
 void WorkflowTask::tick()
 {
@@ -112,21 +117,28 @@ void WorkflowTask::tick()
         break;
 
     case PREPARE_FOR_SLEEP:
-        logOnce("[WF] prepare for sleep");
+        logOnce("[WF] preparing for sleep");
         this->pUserConsole->prepareToSleep();
+        this->pSystem->prepareToSleep();
+        enableInterrupt(PIR_PIN, wakeUpNow, RISING);
         setState(SLEEP);
         break;
 
     case SLEEP:
-        logOnce("[WF] sleep");
+        logOnce("[WF] going to sleep");
         // TODO: to be implemented
-        Serial.println("Faking sleeping...");
+        delay(15);
+        set_sleep_mode(SLEEP_MODE_PWR_DOWN);
+        sleep_enable();
+        sleep_mode();
         setState(RESTORE_FROM_SLEEP);
         break;
 
     case RESTORE_FROM_SLEEP:
-        logOnce("[WF] restore from sleep");
+        logOnce("[WF] restoring from sleep");
         this->pUserConsole->resumeFromSleeping();
+        this->pSystem->resumeFromSleeping();
+        disableInterrupt(PIR_PIN);
         setState(IDLE);
         break;
     }
