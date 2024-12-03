@@ -3,7 +3,6 @@
 
 WarningTask::WarningTask(WasteDisposalSystem *pSystem) : pSystem(pSystem)
 {
-    this->isPlayingSound = false;
     this->state = MUTED;
 }
 
@@ -21,4 +20,10 @@ void WarningTask::tick()
         this->state = MUTED;
         break;
     }
+}
+
+void WarningTask::reset()
+{
+    this->pSystem->stopSound();
+    this->state = MUTED;
 }

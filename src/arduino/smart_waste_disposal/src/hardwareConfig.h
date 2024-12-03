@@ -4,7 +4,7 @@
 #define LED_GREEN_PIN 6
 #define LED_RED_PIN 5
 
-#define TEMP_SENSOR_PIN 4
+#define TEMP_SENSOR_PIN A0
 #define PIR_PIN 3
 
 #define BUZZER_PIN 9

@@ -14,12 +14,12 @@ private:
         PLAYING,
         MUTED
     } state;
-    bool isPlayingSound;
     WasteDisposalSystem *pSystem;
 
 public:
     WarningTask(WasteDisposalSystem *pSystem);
     void tick();
+    void reset();
 };
 
 #endif

@@ -50,6 +50,7 @@ void WorkflowTask::tick()
         this->pSystem->setLed2On(false);
         this->pSystem->closeDoor();
         this->pWarningTask->setActive(false);
+        this->pWarningTask->reset();
         setState(WAITING_FOR_USER);
         break;
 
@@ -188,6 +189,7 @@ void WorkflowTask::tick()
         set_sleep_mode(SLEEP_MODE_PWR_DOWN);
         sleep_enable();
         sleep_mode();
+        sleep_disable();
         setState(RESTORE_FROM_SLEEP);
         break;
 

@@ -10,7 +10,7 @@ public class MonitoringAgent extends Thread {
 	static final String LOG_PREFIX = "lo:";
 	static final String MSG_STATE = "st:";
 
-	static final String[] stateNames = { "Idle", "Waiting for user", "User Detected", "Disposing", "Full", "Overheated"};
+	static final String[] stateNames = {"Idle", "Waiting for user", "User Detected", "Disposing", "Full", "Overheated"};
 
 	public MonitoringAgent(final SerialCommChannel channel, final DashboardView view, final LogView log)
 			throws Exception {
