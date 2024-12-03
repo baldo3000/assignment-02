@@ -25,8 +25,6 @@ void setup()
     MsgService.init();
     sched.init(100);
 
-    Logger.log(".:: Smart Waste Disposal System ::.");
-
     pSystem = new WasteDisposalSystem();
     pSystem->init();
 

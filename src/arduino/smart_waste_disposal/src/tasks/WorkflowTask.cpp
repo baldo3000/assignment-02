@@ -69,11 +69,19 @@ void WorkflowTask::tick()
             Logger.log(String(LOG_TAG) + "waiting for user");
             this->pSystem->waitForUser();
             this->pUserConsole->displayWelcome();
-            this->pUserConsole->displayReadyToDispose();
+            this->pUserConsole->displayWelcome();
         }
         if (elapsedTimeInState() > TIME_TO_SLEEP)
         {
             setState(PREPARE_FOR_SLEEP);
+        }
+        else if (this->pSystem->isFull())
+        {
+            setState(FULL);
+        }
+        else if (this->pSystem->isOverheated())
+        {
+            setState(PROBLEM_DETECTED);
         }
         else if (pSystem->detectedUserPresence())
         {
@@ -91,6 +99,14 @@ void WorkflowTask::tick()
         if (!pSystem->detectedUserPresence())
         {
             setState(WAITING_FOR_USER);
+        }
+        else if (this->pSystem->isFull())
+        {
+            setState(FULL);
+        }
+        else if (this->pSystem->isOverheated())
+        {
+            setState(PROBLEM_DETECTED);
         }
         else if (pUserConsole->openDoorSignal())
         {
