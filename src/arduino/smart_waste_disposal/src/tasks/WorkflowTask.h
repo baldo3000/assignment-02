@@ -26,7 +26,7 @@ private:
 
     void setState(State state);
     long elapsedTimeInState();
-    void logOnce(const String &msg);
+    bool doOnce();
     bool checkEmptyMsg();
     bool checkResetMsg();
 

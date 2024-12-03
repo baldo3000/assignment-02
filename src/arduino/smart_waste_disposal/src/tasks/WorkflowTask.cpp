@@ -26,13 +26,14 @@ long WorkflowTask::elapsedTimeInState()
     return millis() - this->stateTimestamp;
 }
 
-void WorkflowTask::logOnce(const String &msg)
+bool WorkflowTask::doOnce()
 {
     if (this->justEntered)
     {
-        Logger.log(msg);
         this->justEntered = false;
+        return true;
     }
+    return false;
 }
 
 void wakeUpNow() {}
@@ -42,7 +43,7 @@ void WorkflowTask::tick()
     switch (this->state)
     {
     case IDLE:
-        logOnce(String(LOG_TAG) + "idle");
+        Logger.log(String(LOG_TAG) + "idle");
         this->pSystem->idle();
         this->pUserConsole->displayWelcome();
         this->pSystem->setLed1On(true);
@@ -52,10 +53,13 @@ void WorkflowTask::tick()
         break;
 
     case WAITING_FOR_USER:
-        logOnce(String(LOG_TAG) + "waiting for user");
-        this->pSystem->waitForUser();
-        this->pUserConsole->displayWelcome();
-        this->pUserConsole->displayReadyToDispose();
+        if (doOnce())
+        {
+            Logger.log(String(LOG_TAG) + "waiting for user");
+            this->pSystem->waitForUser();
+            this->pUserConsole->displayWelcome();
+            this->pUserConsole->displayReadyToDispose();
+        }
         if (elapsedTimeInState() > TIME_TO_SLEEP)
         {
             setState(PREPARE_FOR_SLEEP);
@@ -67,9 +71,12 @@ void WorkflowTask::tick()
         break;
 
     case USER_DETECTED:
-        logOnce(String(LOG_TAG) + "user detected");
-        this->pSystem->userDetected();
-        this->pUserConsole->displayReadyToDispose();
+        if (doOnce())
+        {
+            Logger.log(String(LOG_TAG) + "user detected");
+            this->pSystem->userDetected();
+            this->pUserConsole->displayReadyToDispose();
+        }
         if (!pSystem->detectedUserPresence())
         {
             setState(WAITING_FOR_USER);
@@ -81,7 +88,7 @@ void WorkflowTask::tick()
         break;
 
     case DOOR_OPENING:
-        logOnce(String(LOG_TAG) + "door opening");
+        Logger.log(String(LOG_TAG) + "door opening");
         this->pSystem->dispose();
         this->pSystem->openDoor();
         this->pUserConsole->displayDisposing();
@@ -89,7 +96,10 @@ void WorkflowTask::tick()
         break;
 
     case DISPOSING:
-        logOnce(String(LOG_TAG) + "disposing");
+        if (doOnce())
+        {
+            Logger.log(String(LOG_TAG) + "disposing");
+        }
         if (elapsedTimeInState() > DISPOSE_MAX_TIME || pUserConsole->closeDoorSignal() || this->pSystem->isFull() || this->pSystem->isOverheated())
         {
             setState(DOOR_CLOSING);
@@ -97,12 +107,16 @@ void WorkflowTask::tick()
         break;
 
     case DOOR_CLOSING:
-        logOnce(String(LOG_TAG) + "door closing");
-        this->pSystem->closeDoor();
+        if (doOnce())
+        {
+            Logger.log(String(LOG_TAG) + "door closing");
+            this->pSystem->closeDoor();
+            this->pUserConsole->displayDisposingEnd();
+        }
         if (this->pSystem->isFull())
         {
             setState(FULL);
-            this->pUserConsole->displayProblem();
+            this->pUserConsole->displayFull();
         }
         else if (this->pSystem->isOverheated())
         {
@@ -111,7 +125,6 @@ void WorkflowTask::tick()
         }
         else
         {
-            this->pUserConsole->displayDisposingEnd();
             if (elapsedTimeInState() > RECYCLE_TIME)
             {
                 setState(WAITING_FOR_USER);
@@ -120,10 +133,13 @@ void WorkflowTask::tick()
         break;
 
     case FULL:
-        this->pSystem->setLed1On(false);
-        this->pSystem->setLed2On(true);
-        logOnce(String(LOG_TAG) + "full");
-        this->pUserConsole->displayFull();
+        if (doOnce())
+        {
+            this->pSystem->setLed1On(false);
+            this->pSystem->setLed2On(true);
+            Logger.log(String(LOG_TAG) + "full");
+            this->pUserConsole->displayFull();
+        }
         if (checkEmptyMsg())
         {
             setState(EMPTYING);
@@ -131,8 +147,11 @@ void WorkflowTask::tick()
         break;
 
     case EMPTYING:
-        logOnce(String(LOG_TAG) + "emptying");
-        this->pSystem->openReverseDoor();
+        if (doOnce())
+        {
+            Logger.log(String(LOG_TAG) + "emptying");
+            this->pSystem->openReverseDoor();
+        }
         if (elapsedTimeInState() > EMPTYING_TIME)
         {
             setState(IDLE);
@@ -140,9 +159,12 @@ void WorkflowTask::tick()
         break;
 
     case PROBLEM_DETECTED:
-        this->pSystem->setLed1On(false);
-        this->pSystem->setLed2On(true);
-        logOnce(String(LOG_TAG) + "problem detected");
+        if (doOnce())
+        {
+            this->pSystem->setLed1On(false);
+            this->pSystem->setLed2On(true);
+            Logger.log(String(LOG_TAG) + "problem detected");
+        }
         if (checkResetMsg())
         {
             setState(IDLE);
@@ -150,7 +172,7 @@ void WorkflowTask::tick()
         break;
 
     case PREPARE_FOR_SLEEP:
-        logOnce(String(LOG_TAG) + "preparing for sleep");
+        Logger.log(String(LOG_TAG) + "preparing for sleep");
         this->pUserConsole->prepareToSleep();
         this->pSystem->prepareToSleep();
         enableInterrupt(PIR_PIN, wakeUpNow, RISING);
@@ -158,7 +180,7 @@ void WorkflowTask::tick()
         break;
 
     case SLEEP:
-        logOnce(String(LOG_TAG) + "going to sleep");
+        Logger.log(String(LOG_TAG) + "going to sleep");
         // TODO: to be implemented
         delay(100);
         set_sleep_mode(SLEEP_MODE_PWR_DOWN);
@@ -168,7 +190,7 @@ void WorkflowTask::tick()
         break;
 
     case RESTORE_FROM_SLEEP:
-        logOnce(String(LOG_TAG) + "restoring from sleep");
+        Logger.log(String(LOG_TAG) + "restoring from sleep");
         this->pUserConsole->resumeFromSleeping();
         this->pSystem->resumeFromSleeping();
         disableInterrupt(PIR_PIN);
@@ -185,7 +207,7 @@ bool WorkflowTask::checkEmptyMsg()
         Msg *msg = MsgService.receiveMsg();
         if (msg != NULL)
         {
-            Logger.log(msg->getContent());
+            // Logger.log(msg->getContent());
             if (msg->getContent() == "emptied")
             {
                 empty = true;
@@ -204,7 +226,7 @@ bool WorkflowTask::checkResetMsg()
         Msg *msg = MsgService.receiveMsg();
         if (msg != NULL)
         {
-            Logger.log(msg->getContent());
+            // Logger.log(msg->getContent());
             if (msg->getContent() == "reset")
             {
                 reset = true;
