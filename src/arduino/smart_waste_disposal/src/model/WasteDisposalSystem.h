@@ -64,6 +64,7 @@ public:
     // hardware control
     void openDoor();
     void closeDoor();
+    void openReverseDoor();
     void setLed1On(bool on);
     void setLed2On(bool on);
     void sampleUserPresence();

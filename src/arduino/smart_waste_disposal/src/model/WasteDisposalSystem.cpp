@@ -120,6 +120,11 @@ void WasteDisposalSystem::closeDoor()
     this->pDoorMotor->setPosition(90);
 }
 
+void WasteDisposalSystem::openReverseDoor()
+{
+    this->pDoorMotor->setPosition(0);
+}
+
 void WasteDisposalSystem::setLed1On(const bool on)
 {
     if (on)

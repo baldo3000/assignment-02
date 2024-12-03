@@ -47,11 +47,12 @@ void WorkflowTask::tick()
         this->pUserConsole->displayWelcome();
         this->pSystem->setLed1On(true);
         this->pSystem->setLed2On(false);
+        this->pSystem->closeDoor();
         setState(WAITING_FOR_USER);
         break;
 
     case WAITING_FOR_USER:
-        logOnce(String(LOG_TAG) +  "waiting for user");
+        logOnce(String(LOG_TAG) + "waiting for user");
         this->pSystem->waitForUser();
         this->pUserConsole->displayWelcome();
         this->pUserConsole->displayReadyToDispose();
@@ -98,14 +99,43 @@ void WorkflowTask::tick()
     case DOOR_CLOSING:
         logOnce(String(LOG_TAG) + "door closing");
         this->pSystem->closeDoor();
-        this->pUserConsole->displayDisposingEnd();
-        if (this->pSystem->isFull() || this->pSystem->isOverheated())
+        if (this->pSystem->isFull())
+        {
+            setState(FULL);
+            this->pUserConsole->displayProblem();
+        }
+        else if (this->pSystem->isOverheated())
         {
             setState(PROBLEM_DETECTED);
+            this->pUserConsole->displayProblem();
         }
         else
         {
-            setState(WAITING_FOR_USER);
+            this->pUserConsole->displayDisposingEnd();
+            if (elapsedTimeInState() > RECYCLE_TIME)
+            {
+                setState(WAITING_FOR_USER);
+            }
+        }
+        break;
+
+    case FULL:
+        this->pSystem->setLed1On(false);
+        this->pSystem->setLed2On(true);
+        logOnce(String(LOG_TAG) + "full");
+        this->pUserConsole->displayFull();
+        if (checkEmptyMsg())
+        {
+            setState(EMPTYING);
+        }
+        break;
+
+    case EMPTYING:
+        logOnce(String(LOG_TAG) + "emptying");
+        this->pSystem->openReverseDoor();
+        if (elapsedTimeInState() > EMPTYING_TIME)
+        {
+            setState(IDLE);
         }
         break;
 
@@ -113,27 +143,9 @@ void WorkflowTask::tick()
         this->pSystem->setLed1On(false);
         this->pSystem->setLed2On(true);
         logOnce(String(LOG_TAG) + "problem detected");
-        if (this->pSystem->isFull())
+        if (checkResetMsg())
         {
-            if (checkEmptyMsg())
-            {
-                setState(IDLE);
-            }
-            else
-            {
-                this->pUserConsole->displayFull();
-            }
-        }
-        if (this->pSystem->isOverheated())
-        {
-            if (checkResetMsg())
-            {
-                setState(IDLE);
-            }
-            else
-            {
-                this->pUserConsole->displayProblem();
-            }
+            setState(IDLE);
         }
         break;
 

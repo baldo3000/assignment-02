@@ -52,35 +52,35 @@ void UserConsole::displayWelcome()
 
 void UserConsole::displayReadyToDispose()
 {
-    //this->pLcd->clear();
+    this->pLcd->clear();
     this->pLcd->setCursor(0, 0);
     this->pLcd->print("PRESS OPEN TO ENTER WASTE");
 }
 
 void UserConsole::displayDisposing()
 {
-    //this->pLcd->clear();
+    this->pLcd->clear();
     this->pLcd->setCursor(0, 0);
     this->pLcd->print("PRESS CLOSE WHEN DONE");
 }
 
 void UserConsole::displayDisposingEnd()
 {
-    //this->pLcd->clear();
+    this->pLcd->clear();
     this->pLcd->setCursor(0, 0);
     this->pLcd->print("WASTE RECEIVED");
 }
 
 void UserConsole::displayFull()
 {
-    //this->pLcd->clear();
+    this->pLcd->clear();
     this->pLcd->setCursor(0, 0);
     this->pLcd->print("CONTAINER FULL");
 }
 
 void UserConsole::displayProblem()
 {
-    //this->pLcd->clear();
+    this->pLcd->clear();
     this->pLcd->setCursor(0, 0);
     this->pLcd->print("PROBLEM DETECTED");
 }

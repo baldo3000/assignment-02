@@ -19,6 +19,8 @@ private:
         DOOR_OPENING,
         DISPOSING,
         DOOR_CLOSING,
+        FULL,
+        EMPTYING,
         PROBLEM_DETECTED
     } state;
 
