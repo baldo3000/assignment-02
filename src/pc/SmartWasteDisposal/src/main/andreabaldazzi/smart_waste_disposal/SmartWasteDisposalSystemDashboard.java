@@ -17,8 +17,8 @@ class SmartWasteDisposalSystemDashboard {
 				view, log);
 		view.registerController(contr);
 		SwingUtilities.invokeLater(() -> {
-			view.setVisible(true);
 			log.setVisible(true);
+			view.setVisible(true);
 		});
 	}
 }
