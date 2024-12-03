@@ -30,10 +30,15 @@ void WasteDisposalSystem::init()
     this->state = IDLE;
 }
 
-// TODO: Implement what to do before sleeping (turning off things)
-void WasteDisposalSystem::prepareToSleep() {}
-// TODO: Implement what to do after sleeping (restoring)
-void WasteDisposalSystem::resumeFromSleeping() {}
+void WasteDisposalSystem::prepareToSleep()
+{
+    this->pDoorMotor->off();
+}
+
+void WasteDisposalSystem::resumeFromSleeping()
+{
+    this->pDoorMotor->on();
+}
 
 bool WasteDisposalSystem::isIdle()
 {
