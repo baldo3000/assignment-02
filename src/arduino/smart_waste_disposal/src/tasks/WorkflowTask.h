@@ -26,11 +26,13 @@ private:
     } state;
 
     void setState(State state);
+    void restorePrevState();
     long elapsedTimeInState();
     bool doOnce();
     bool checkEmptyMsg();
     bool checkResetMsg();
 
+    State prevState;
     long stateTimestamp;
     bool justEntered;
 

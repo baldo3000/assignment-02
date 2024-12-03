@@ -2,8 +2,8 @@ package andreabaldazzi.smart_waste_disposal;
 
 public class SmartWasteDisposalSystemDashboardController {
 
-	static final String MSG_EMPTIED = "emptied";
-	static final String MSG_RESET = "reset";
+	static final String MSG_EMPTIED = "Cemptied";
+	static final String MSG_RESET = "Creset";
 
 	SerialCommChannel channel;
 	DashboardView view;

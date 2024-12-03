@@ -14,6 +14,7 @@ private:
         PLAYING,
         MUTED
     } state;
+
     WasteDisposalSystem *pSystem;
 
 public:

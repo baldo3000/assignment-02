@@ -16,9 +16,18 @@ WorkflowTask::WorkflowTask(WasteDisposalSystem *pSystem, UserConsole *pUserConso
 
 void WorkflowTask::setState(const State state)
 {
+    if (state == PREPARE_FOR_SLEEP)
+    {
+        this->prevState = this->state;
+    }
     this->state = state;
     this->stateTimestamp = millis();
     this->justEntered = true;
+}
+
+void WorkflowTask::restorePrevState()
+{
+    setState(this->prevState);
 }
 
 long WorkflowTask::elapsedTimeInState()
@@ -142,6 +151,10 @@ void WorkflowTask::tick()
             Logger.log(String(LOG_TAG) + "full");
             this->pUserConsole->displayFull();
         }
+        if (elapsedTimeInState() > TIME_TO_SLEEP)
+        {
+            setState(PREPARE_FOR_SLEEP);
+        }
         if (checkEmptyMsg())
         {
             setState(EMPTYING);
@@ -168,6 +181,10 @@ void WorkflowTask::tick()
             this->pWarningTask->setActive(true);
             Logger.log(String(LOG_TAG) + "problem detected");
         }
+        if (elapsedTimeInState() > TIME_TO_SLEEP)
+        {
+            setState(PREPARE_FOR_SLEEP);
+        }
         if (checkResetMsg())
         {
             setState(IDLE);
@@ -179,16 +196,17 @@ void WorkflowTask::tick()
         this->pUserConsole->prepareToSleep();
         this->pSystem->prepareToSleep();
         enableInterrupt(PIR_PIN, wakeUpNow, RISING);
+        enableInterrupt(0, wakeUpNow, RISING);
         setState(SLEEP);
         break;
 
     case SLEEP:
-        Logger.log(String(LOG_TAG) + "going to sleep");
-        // TODO: to be implemented
-        delay(100);
+        // Logger.log(String(LOG_TAG) + "sleeping");
         set_sleep_mode(SLEEP_MODE_PWR_DOWN);
         sleep_enable();
+        delay(15);
         sleep_mode();
+        delay(15);
         sleep_disable();
         setState(RESTORE_FROM_SLEEP);
         break;
@@ -198,7 +216,8 @@ void WorkflowTask::tick()
         this->pUserConsole->resumeFromSleeping();
         this->pSystem->resumeFromSleeping();
         disableInterrupt(PIR_PIN);
-        setState(IDLE);
+        disableInterrupt(0);
+        restorePrevState();
         break;
     }
 }
@@ -212,7 +231,7 @@ bool WorkflowTask::checkEmptyMsg()
         if (msg != NULL)
         {
             // Logger.log(msg->getContent());
-            if (msg->getContent() == "emptied")
+            if (msg->getContent() == "Cemptied" || msg->getContent() == "emptied")
             {
                 empty = true;
             }
@@ -231,7 +250,7 @@ bool WorkflowTask::checkResetMsg()
         if (msg != NULL)
         {
             // Logger.log(msg->getContent());
-            if (msg->getContent() == "reset")
+            if (msg->getContent() == "Creset" || msg->getContent() == "reset")
             {
                 reset = true;
             }
