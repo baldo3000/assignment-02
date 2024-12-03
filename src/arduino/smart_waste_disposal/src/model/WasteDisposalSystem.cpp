@@ -16,6 +16,7 @@ void WasteDisposalSystem::init()
     this->pGreenLed = new Led(LED_GREEN_PIN);
     this->pRedLed = new Led(LED_RED_PIN);
     this->pDoorMotor = new ServoMotorImpl(DOOR_PIN);
+    this->pBuzzer = new Buzzer(BUZZER_PIN);
 
     Logger.log("Calibrating sensors in plant...");
     this->pPresenceSensor->calibrate();
@@ -147,6 +148,16 @@ void WasteDisposalSystem::setLed2On(const bool on)
     {
         this->pRedLed->switchOff();
     }
+}
+
+void WasteDisposalSystem::playSound(const unsigned int frequency)
+{
+    this->pBuzzer->playSound(frequency);
+}
+
+void WasteDisposalSystem::stopSound()
+{
+    this->pBuzzer->noSound();
 }
 
 void WasteDisposalSystem::sampleUserPresence()

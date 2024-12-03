@@ -4,6 +4,7 @@
 #include "kernel/Task.h"
 #include "model/WasteDisposalSystem.h"
 #include "model/UserConsole.h"
+#include "WarningTask.h"
 
 class WorkflowTask : public Task
 {
@@ -35,9 +36,10 @@ private:
 
     WasteDisposalSystem *pSystem;
     UserConsole *pUserConsole;
+    WarningTask *pWarningTask;
 
 public:
-    WorkflowTask(WasteDisposalSystem *pSystem, UserConsole *pUserConsole);
+    WorkflowTask(WasteDisposalSystem *pSystem, UserConsole *pUserConsole, WarningTask *pWarningTask);
     void tick();
 };
 

@@ -9,7 +9,7 @@ private:
     int pin;
 
 public:
-    Led(const int pin);
+    Led(int pin);
     void switchOn();
     void switchOff();
 };

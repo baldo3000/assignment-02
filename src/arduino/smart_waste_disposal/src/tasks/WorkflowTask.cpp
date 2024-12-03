@@ -9,7 +9,7 @@
 
 #define LOG_TAG "[WF] "
 
-WorkflowTask::WorkflowTask(WasteDisposalSystem *pSystem, UserConsole *pUserConsole) : pSystem(pSystem), pUserConsole(pUserConsole)
+WorkflowTask::WorkflowTask(WasteDisposalSystem *pSystem, UserConsole *pUserConsole, WarningTask *pWarningTask) : pSystem(pSystem), pUserConsole(pUserConsole), pWarningTask(pWarningTask)
 {
     setState(IDLE);
 }
@@ -49,6 +49,7 @@ void WorkflowTask::tick()
         this->pSystem->setLed1On(true);
         this->pSystem->setLed2On(false);
         this->pSystem->closeDoor();
+        this->pWarningTask->setActive(false);
         setState(WAITING_FOR_USER);
         break;
 
@@ -163,6 +164,7 @@ void WorkflowTask::tick()
         {
             this->pSystem->setLed1On(false);
             this->pSystem->setLed2On(true);
+            this->pWarningTask->setActive(true);
             Logger.log(String(LOG_TAG) + "problem detected");
         }
         if (checkResetMsg())

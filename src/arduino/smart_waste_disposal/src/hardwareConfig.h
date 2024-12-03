@@ -7,6 +7,8 @@
 #define TEMP_SENSOR_PIN 4
 #define PIR_PIN 3
 
+#define BUZZER_PIN 9
+
 #define SONAR_TRIG_PIN 7
 #define SONAR_ECHO_PIN 8
 

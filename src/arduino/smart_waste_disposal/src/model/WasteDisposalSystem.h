@@ -7,6 +7,7 @@
 #include "devices/ServoMotor.h"
 #include "devices/Sonar.h"
 #include "devices/TemperatureSensor.h"
+#include "devices/Buzzer.h"
 
 class WasteDisposalSystem
 {
@@ -17,6 +18,7 @@ private:
     ServoMotor *pDoorMotor;
     Sonar *pProximitySensor;
     TemperatureSensor *pTemperatureSensor;
+    Buzzer *pBuzzer;
 
     double fullness;
     double temperature;
@@ -67,6 +69,8 @@ public:
     void openReverseDoor();
     void setLed1On(bool on);
     void setLed2On(bool on);
+    void playSound(unsigned int frequency);
+    void stopSound();
     void sampleUserPresence();
     void sampleFullness();
     void sampleTemperature();

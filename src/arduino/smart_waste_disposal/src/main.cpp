@@ -7,6 +7,7 @@
 #include "model/UserConsole.h"
 #include "model/WasteDisposalSystem.h"
 
+#include "tasks/WarningTask.h"
 #include "tasks/WorkflowTask.h"
 #include "tasks/CheckTask.h"
 #include "tasks/FullnessTask.h"
@@ -33,13 +34,15 @@ void setup()
     pUserConsole->init();
     pUserConsole->turnOnDisplay();
 
+    WarningTask *pWarningTask = new WarningTask(pSystem);
     FullnessTask *pFullnessTask = new FullnessTask(pSystem);
     TemperatureTask *pTemperatureTask = new TemperatureTask(pSystem);
     UserPresenceTask *pUserPresenceTask = new UserPresenceTask(pSystem);
-    WorkflowTask *pWorkflowTask = new WorkflowTask(pSystem, pUserConsole);
+    WorkflowTask *pWorkflowTask = new WorkflowTask(pSystem, pUserConsole, pWarningTask);
     CheckTask *pCheckTask = new CheckTask(pSystem, pUserConsole);
     TelemetryTask *pTelemetryTask = new TelemetryTask(pSystem, pUserConsole);
 
+    pWarningTask->init(500);
     pFullnessTask->init(200);
     pTemperatureTask->init(100);
     pUserPresenceTask->init(100);
@@ -47,6 +50,7 @@ void setup()
     pCheckTask->init(100);
     pTelemetryTask->init(100);
 
+    sched.addTask(pWarningTask);
     sched.addTask(pFullnessTask);
     sched.addTask(pTemperatureTask);
     sched.addTask(pUserPresenceTask);
