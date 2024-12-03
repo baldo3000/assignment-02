@@ -7,6 +7,8 @@
 #include <avr/sleep.h>
 #include <EnableInterrupt.h>
 
+#define LOG_TAG "[WF] "
+
 WorkflowTask::WorkflowTask(WasteDisposalSystem *pSystem, UserConsole *pUserConsole) : pSystem(pSystem), pUserConsole(pUserConsole)
 {
     setState(IDLE);
@@ -40,7 +42,7 @@ void WorkflowTask::tick()
     switch (this->state)
     {
     case IDLE:
-        logOnce("[WF] idle");
+        logOnce(String(LOG_TAG) + "idle");
         this->pSystem->idle();
         this->pUserConsole->displayWelcome();
         this->pSystem->setLed1On(true);
@@ -49,8 +51,10 @@ void WorkflowTask::tick()
         break;
 
     case WAITING_FOR_USER:
-        logOnce("[WF] waiting for user");
+        logOnce(String(LOG_TAG) +  "waiting for user");
         this->pSystem->waitForUser();
+        this->pUserConsole->displayWelcome();
+        this->pUserConsole->displayReadyToDispose();
         if (elapsedTimeInState() > TIME_TO_SLEEP)
         {
             setState(PREPARE_FOR_SLEEP);
@@ -62,8 +66,9 @@ void WorkflowTask::tick()
         break;
 
     case USER_DETECTED:
-        logOnce("[WF] user detected");
+        logOnce(String(LOG_TAG) + "user detected");
         this->pSystem->userDetected();
+        this->pUserConsole->displayReadyToDispose();
         if (!pSystem->detectedUserPresence())
         {
             setState(WAITING_FOR_USER);
@@ -75,14 +80,15 @@ void WorkflowTask::tick()
         break;
 
     case DOOR_OPENING:
-        logOnce("[WF] door opening");
+        logOnce(String(LOG_TAG) + "door opening");
         this->pSystem->dispose();
         this->pSystem->openDoor();
+        this->pUserConsole->displayDisposing();
         setState(DISPOSING);
         break;
 
     case DISPOSING:
-        logOnce("[WF] disposing");
+        logOnce(String(LOG_TAG) + "disposing");
         if (elapsedTimeInState() > DISPOSE_MAX_TIME || pUserConsole->closeDoorSignal() || this->pSystem->isFull() || this->pSystem->isOverheated())
         {
             setState(DOOR_CLOSING);
@@ -90,8 +96,9 @@ void WorkflowTask::tick()
         break;
 
     case DOOR_CLOSING:
-        logOnce("[WF] door closing");
+        logOnce(String(LOG_TAG) + "door closing");
         this->pSystem->closeDoor();
+        this->pUserConsole->displayDisposingEnd();
         if (this->pSystem->isFull() || this->pSystem->isOverheated())
         {
             setState(PROBLEM_DETECTED);
@@ -105,19 +112,33 @@ void WorkflowTask::tick()
     case PROBLEM_DETECTED:
         this->pSystem->setLed1On(false);
         this->pSystem->setLed2On(true);
-        logOnce("[WF] problem detected");
-        if (this->pSystem->isFull() && checkEmptyMsg())
+        logOnce(String(LOG_TAG) + "problem detected");
+        if (this->pSystem->isFull())
         {
-            setState(IDLE);
+            if (checkEmptyMsg())
+            {
+                setState(IDLE);
+            }
+            else
+            {
+                this->pUserConsole->displayFull();
+            }
         }
-        if (this->pSystem->isOverheated() && checkResetMsg())
+        if (this->pSystem->isOverheated())
         {
-            setState(IDLE);
+            if (checkResetMsg())
+            {
+                setState(IDLE);
+            }
+            else
+            {
+                this->pUserConsole->displayProblem();
+            }
         }
         break;
 
     case PREPARE_FOR_SLEEP:
-        logOnce("[WF] preparing for sleep");
+        logOnce(String(LOG_TAG) + "preparing for sleep");
         this->pUserConsole->prepareToSleep();
         this->pSystem->prepareToSleep();
         enableInterrupt(PIR_PIN, wakeUpNow, RISING);
@@ -125,9 +146,9 @@ void WorkflowTask::tick()
         break;
 
     case SLEEP:
-        logOnce("[WF] going to sleep");
+        logOnce(String(LOG_TAG) + "going to sleep");
         // TODO: to be implemented
-        delay(15);
+        delay(100);
         set_sleep_mode(SLEEP_MODE_PWR_DOWN);
         sleep_enable();
         sleep_mode();
@@ -135,7 +156,7 @@ void WorkflowTask::tick()
         break;
 
     case RESTORE_FROM_SLEEP:
-        logOnce("[WF] restoring from sleep");
+        logOnce(String(LOG_TAG) + "restoring from sleep");
         this->pUserConsole->resumeFromSleeping();
         this->pSystem->resumeFromSleeping();
         disableInterrupt(PIR_PIN);

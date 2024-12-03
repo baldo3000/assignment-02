@@ -17,7 +17,6 @@ public:
     UserConsole();
 
     void init();
-    void sync();
 
     void turnOffDisplay();
     void turnOnDisplay();
@@ -27,10 +26,10 @@ public:
 
     void displayWelcome();
     void displayReadyToDispose();
-    void displayWaitToDispose();
     void displayDisposing();
-    void displayDisposingTimeOut();
-    void displayDisposingEnding();
+    void displayDisposingEnd();
+    void displayFull();
+    void displayProblem();
 
     void prepareToSleep();
     void resumeFromSleeping();
