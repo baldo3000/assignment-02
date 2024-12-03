@@ -13,6 +13,8 @@ void CheckTask::setState(const State state)
     this->state = state;
     this->stateTimestamp = millis();
     this->justEntered = true;
+    this->elapsedTimeOverheated = 0;
+    this->overHeated = false;
 }
 
 long CheckTask::elapsedTimeInState()
@@ -35,12 +37,25 @@ void CheckTask::tick()
     {
     case CHECKING_PROBLEMS:
         // logOnce("[CHK] checking problems");
-        if (pSystem->getCurrentTemperature() >= OVERHEAT_THRESHOLD)
+        if (pSystem->getCurrentTemperature() >= OVERHEAT_TEMPERATURE_THRESHOLD)
         {
-            this->pSystem->overheated();
-            setState(OVERHEATED);
+            if (!this->overHeated)
+            {
+                this->overHeated = true;
+                this->elapsedTimeOverheated = millis();
+            }
+            else if (millis() - this->elapsedTimeOverheated > OVERHEAT_TIME_THRESHOLD)
+            {
+                this->pSystem->overheated();
+                setState(OVERHEATED);
+            }
         }
-        else if (pSystem->getCurrentFullness() >= FULL_THRESHOLD)
+        else
+        {
+            this->elapsedTimeOverheated = 0;
+            this->overHeated = false;
+        }
+        if (pSystem->getCurrentFullness() >= FULL_THRESHOLD)
         {
             this->pSystem->full();
             setState(FULL);

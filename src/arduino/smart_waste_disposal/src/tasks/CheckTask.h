@@ -20,6 +20,8 @@ private:
     void logOnce(const String &msg);
 
     long stateTimestamp;
+    long elapsedTimeOverheated;
+    bool overHeated;
     bool justEntered;
 
     WasteDisposalSystem *pSystem;
