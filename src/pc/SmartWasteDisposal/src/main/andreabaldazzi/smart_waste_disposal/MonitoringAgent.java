@@ -49,7 +49,7 @@ public class MonitoringAgent extends Thread {
 								}
 								if (stateCode == 5 && !overheated) { // overheated
 									overheated = true;
-									view.enableEmpty();
+									view.enableReset();
 								} else if (stateCode != 5 && overheated) {
 									overheated = false;
 								}

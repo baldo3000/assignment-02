@@ -98,6 +98,12 @@ class DashboardView extends JFrame implements ActionListener {
 		});
 	}
 
+	public void enableReset() {
+		SwingUtilities.invokeLater(() -> {
+			resetButton.setEnabled(true);
+		});
+	}
+
 	public void actionPerformed(final ActionEvent ev) {
 		try {
 			if (ev.getSource() == emptyButton) {
