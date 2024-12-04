@@ -16,7 +16,7 @@ WorkflowTask::WorkflowTask(WasteDisposalSystem *pSystem, UserConsole *pUserConso
 
 void WorkflowTask::setState(const State state)
 {
-    if (state == PREPARE_FOR_SLEEP)
+    if (state == SLEEP)
     {
         this->prevState = this->state;
     }
@@ -73,7 +73,7 @@ void WorkflowTask::tick()
         }
         if (elapsedTimeInState() > TIME_TO_SLEEP)
         {
-            setState(PREPARE_FOR_SLEEP);
+            setState(SLEEP);
         }
         else if (this->pSystem->isFull())
         {
@@ -169,7 +169,7 @@ void WorkflowTask::tick()
         }
         if (elapsedTimeInState() > TIME_TO_SLEEP)
         {
-            setState(PREPARE_FOR_SLEEP);
+            setState(SLEEP);
         }
         if (checkEmptyMsg())
         {
@@ -199,7 +199,7 @@ void WorkflowTask::tick()
         }
         if (elapsedTimeInState() > TIME_TO_SLEEP)
         {
-            setState(PREPARE_FOR_SLEEP);
+            setState(SLEEP);
         }
         if (checkResetMsg())
         {
@@ -207,27 +207,20 @@ void WorkflowTask::tick()
         }
         break;
 
-    case PREPARE_FOR_SLEEP:
-        Logger.log(String(LOG_TAG) + "preparing for sleep");
+    case SLEEP:
+        Logger.log(String(LOG_TAG) + "sleeping");
         this->pUserConsole->prepareToSleep();
         this->pSystem->prepareToSleep();
         enableInterrupt(PIR_PIN, wakeUpNow, RISING);
         enableInterrupt(0, wakeUpNow, RISING);
-        setState(SLEEP);
-        break;
-
-    case SLEEP:
-        // Logger.log(String(LOG_TAG) + "sleeping");
         set_sleep_mode(SLEEP_MODE_PWR_DOWN);
         sleep_enable();
         delay(15);
+
         sleep_mode();
+
         delay(15);
         sleep_disable();
-        setState(RESTORE_FROM_SLEEP);
-        break;
-
-    case RESTORE_FROM_SLEEP:
         Logger.log(String(LOG_TAG) + "restoring from sleep");
         this->pUserConsole->resumeFromSleeping();
         this->pSystem->resumeFromSleeping();
