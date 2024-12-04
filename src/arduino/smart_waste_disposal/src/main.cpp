@@ -1,3 +1,7 @@
+/*
+ *  Assignment 02 - Waste Disposal System - Andrea Baldazzi 0001071149
+ */
+
 #include <Arduino.h>
 #include "config.h"
 #include "kernel/Scheduler.h"
